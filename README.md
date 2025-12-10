@@ -22,6 +22,7 @@ A mobile application featuring a Netflix-like UI with category-based movie listi
 
 ⚡ Fast performance & clean architecture
 
+
 📸 Screenshots
 
 ![netflixRN](https://github.com/user-attachments/assets/5465381f-efe7-483d-aa28-ca7801bbca3f)
