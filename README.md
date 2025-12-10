@@ -22,8 +22,15 @@ A mobile application featuring a Netflix-like UI with category-based movie listi
 
 ⚡ Fast performance & clean architecture
 
-📦 Tech Stack
-Frontend
+📸 Screenshots
+
+![netflixRN](https://github.com/user-attachments/assets/5465381f-efe7-483d-aa28-ca7801bbca3f)
+
+
+
+## 📦 Tech Stack
+
+* Frontend
 
 React Native 0.82
 
@@ -37,10 +44,10 @@ Axios
 
 Iconsax
 
-State Management
+* State Management
 
 Redux Toolkit (createSlice, createAsyncThunk)
 
-API
+* API
 
 The Movie Database (TMDB)
