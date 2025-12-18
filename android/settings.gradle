@@ -1,6 +1,25 @@
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    plugins {
+        id("com.android.application") version "8.10.1"
+        id("com.android.library") version "8.10.1"
+        id("org.jetbrains.kotlin.android") version "2.1.20"
+    }
+    includeBuild("../node_modules/@react-native/gradle-plugin")
+}
+
+
+
 plugins { id("com.facebook.react.settings") }
-extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-rootProject.name = 'netflixClone'
-include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+
+extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
+    ex.autolinkLibrariesFromCommand()
+}
+
+rootProject.name = "netflixClone"
+include(":app")
+includeBuild("../node_modules/@react-native/gradle-plugin")
