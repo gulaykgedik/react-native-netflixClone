@@ -1,0 +1,10 @@
+export const GET_STARTED = "GetStarted";
+export const ACCOUNTS = "Accounts";
+export const PROFILE = "Profile";
+export const SEARCH = "Search"; 
+export const HOME = "Home";
+export const CATEGORIES = "Categories";
+export const TABMENU = "TabMenu";
+export const MOVIES = "Movies";
+export const MOVİE_DETAIL = "MovieDetail";
+export const CATEGORY_MOVIES = "CategoryMovies";
