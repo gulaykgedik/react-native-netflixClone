@@ -21,7 +21,7 @@ const MovieItem: React.FC<MovieItemProps> = memo(({ movie }) => {
     const uri = movie.poster_path ? `${IMAGE_URL}${movie.poster_path}` : null;
 
     const handlePress = useCallback(() => {
-        navigation.navigate(MOVİE_DETAIL, { movie });
+        navigation.navigate(MOVİE_DETAIL, { movieId: movie });
     }, [navigation, movie]);
 
     return (

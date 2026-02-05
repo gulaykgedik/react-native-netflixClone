@@ -2,7 +2,7 @@ import { StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React, { use } from 'react'
 import GetStarted from '../screens/getStarted'
 import Accounts from '../screens/accounts'
-import { ACCOUNTS, CATEGORY_MOVIES, GET_STARTED, MOVIES, MOVİE_DETAIL, TABMENU } from '../utils/routes'
+import { ACCOUNTS, CATEGORY_MOVIES, GET_STARTED, MOVIES, MOVİE_DETAIL, NOTIFICATIONS, TABMENU } from '../utils/routes'
 import TabNavigator from './tabNavigator'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Colors from '../theme/colors'
@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native'
 import Movies from '../screens/movies';
 import MovieDetail from '../screens/movies/movieDetail';
 import CategoryMovies from "../screens/categories/categoryMovies"
+import Notifications from '../screens/notifications'
 
 const Logo = require('../assets/images/logo.png');
 
@@ -117,6 +118,7 @@ const RootNavigator: React.FC = () => {
           ),
         }}
       name={CATEGORY_MOVIES} component={CategoryMovies} />
+      <Stack.Screen name={NOTIFICATIONS} component={Notifications} />
 
     </Stack.Navigator>
   )

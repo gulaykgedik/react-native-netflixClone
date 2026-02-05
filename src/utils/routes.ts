@@ -8,3 +8,4 @@ export const TABMENU = "TabMenu";
 export const MOVIES = "Movies";
 export const MOVİE_DETAIL = "MovieDetail";
 export const CATEGORY_MOVIES = "CategoryMovies";
+export const NOTIFICATIONS = "Notifications";

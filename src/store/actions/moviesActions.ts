@@ -64,12 +64,23 @@ const getMovieData = createAsyncThunk(
     'movies/getMovieData',
     async (movieId: number, thunkAPI) => {
         try {
+            console.log(`Fetching movie details for ID: ${movieId}`);
             const response = await getRequest(`${MOVIE_URL}${movieId}`, {});
-            const data = response.data;
-            return data;
+            console.log(`Movie data response:`, response.data);
+            return response.data;
         } catch (error) {
-            const message = error instanceof Error ? error.message : 'Failed to fetch movie data';
-            return thunkAPI.rejectWithValue(message);
+                // More detailed logging for debugging 404/failed requests
+                // Axios error may contain response and config
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const err: any = error;
+                console.log('Movie data fetch error:', err.message || err);
+                if (err.response) {
+                    console.log('Response status:', err.response.status);
+                    console.log('Response data:', err.response.data);
+                    console.log('Request URL:', err.config?.url || err.request?.responseURL || 'unknown');
+                }
+                const message = err instanceof Error ? err.message : 'Failed to fetch movie data';
+                return thunkAPI.rejectWithValue(message);
         }
     }
 );

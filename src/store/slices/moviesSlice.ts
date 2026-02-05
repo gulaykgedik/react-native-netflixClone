@@ -69,14 +69,18 @@ const moviesSlice = createSlice({
 
       .addCase(getMovieData.pending, (state, action) => {
         state.pending = true;
+        state.movieData = {}; // Yükleme öncesinde sıfırla
       })
       .addCase(getMovieData.fulfilled, (state, action) => {
         state.pending = false;
-        state.movieData = action.payload;
+        state.movieData = action.payload || {};
+        console.log("Movie data received:", action.payload);
       })
       .addCase(getMovieData.rejected, (state, action) => {
         state.pending = false;
+        state.movieData = {};
         state.error = action.payload;
+        console.log("Movie data fetch error:", action.payload);
       })
 
       .addCase(getMoviesByGenre.pending, (state, action) => {

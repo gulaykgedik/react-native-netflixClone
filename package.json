@@ -10,6 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^23.7.0",
+    "@react-native-firebase/firestore": "^23.8.5",
+    "@react-native-firebase/messaging": "^23.7.0",
     "@react-native/new-app-screen": "0.82.1",
     "@react-navigation/bottom-tabs": "^7.8.11",
     "@react-navigation/native": "^7.1.24",
@@ -46,6 +49,6 @@
     "typescript": "^5.8.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   }
 }

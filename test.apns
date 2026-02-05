@@ -1,0 +1,13 @@
+{
+    "Simulator Target Bundle": "com.reactnative.netflixClone",
+    "aps":{
+        "alert":{
+            "title":"Simülatör Test",
+            "body": "Bu bir test bildirimi"
+        },
+        "sound": "default"
+    },
+    "data": {
+        "link": "netflixClone://movie/617126"
+    }
+}

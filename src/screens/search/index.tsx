@@ -141,3 +141,5 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
 });
+
+export default SearchScreen;

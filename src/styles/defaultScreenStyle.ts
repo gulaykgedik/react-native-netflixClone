@@ -6,7 +6,6 @@ const defaultScreenStyle = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.BLACK,
     padding: 8,
-  
   },
   text: {
     color: Colors.WHITE,

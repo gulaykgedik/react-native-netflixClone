@@ -1,5 +1,5 @@
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useMemo, useCallback } from 'react'
+import React, { useEffect, useMemo, useCallback, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { getMovieData } from '../../store/actions/moviesActions';
 import Colors from '../../theme/colors';
@@ -14,40 +14,50 @@ interface MovieDetailProps {
   route?: {
     params?: {
       movie?: Movie;
+      movieId?: number;
     };
   };
 }
 
 const MovieDetail: React.FC<MovieDetailProps> = ({ route }) => {
   const { pending, movieData } = useSelector((state:RootState) => state.movies);
-  const movie = route?.params?.movie;
+  const movieParam = route?.params?.movie as Movie | undefined;
+  const movieIdParam = route?.params?.movieId as number | undefined;
+  // prefer redux movieData when available, otherwise use route param
+  const hasMovieData = movieData && typeof movieData === 'object' && Object.keys(movieData).length > 0;
+  const effectiveMovie: Movie | undefined = hasMovieData ? (movieData as Movie) : movieParam;
 
-  const backdropPath = useMemo(() => {
-    const data = movieData as Movie;
-    return data?.backdrop_path || movie?.backdrop_path;
-  }, [movieData, movie?.backdrop_path]);
+  const backdropPath = useMemo(() => effectiveMovie?.backdrop_path, [effectiveMovie]);
 
-  const uri = useMemo(() => 
-    backdropPath ? `${IMAGE_URL}${backdropPath}` : null
-  , [backdropPath]);
+  const uri = useMemo(() => (backdropPath ? `${IMAGE_URL}${backdropPath}` : null), [backdropPath]);
 
-  const posterUri = useMemo(() => {
-    const data = movieData as Movie;
-    return data?.poster_path ? `${IMAGE_URL}${data.poster_path}` : null;
-  }, [movieData]);
+  const posterUri = useMemo(() => (effectiveMovie?.poster_path ? `${IMAGE_URL}${effectiveMovie.poster_path}` : null), [effectiveMovie]);
 
-  const voteAverage = useMemo(() => 
-    movie?.vote_average ? movie.vote_average.toFixed(1) : 'N/A'
-  , [movie?.vote_average]);
+  const voteAverage = useMemo(() => (effectiveMovie?.vote_average ? effectiveMovie.vote_average.toFixed(1) : 'N/A'), [effectiveMovie]);
 
   const dispatch:AppDispatch = useDispatch();
 
-  useEffect(() => {
-    if (movie?.id) {
-      dispatch(getMovieData(movie.id));
-    }
-  }, [dispatch, movie?.id]);
+  const lastFetchedId = useRef<number | null>(null);
 
+  useEffect(() => {
+    // Normalize id: could be passed as movieId:number or movie:{id,...}
+    let raw = movieIdParam ?? movieParam ?? undefined;
+    let idToFetch: number | undefined;
+    if (typeof raw === 'number') idToFetch = raw;
+    else if (raw && typeof raw === 'object' && typeof (raw as any).id === 'number') idToFetch = (raw as any).id;
+
+    if (idToFetch && lastFetchedId.current !== idToFetch) {
+      // avoid refetching the same id repeatedly
+      console.log('Fetching movie data for ID:', idToFetch);
+      lastFetchedId.current = idToFetch;
+      dispatch(getMovieData(idToFetch));
+    }
+  }, [dispatch, movieIdParam, movieParam]);
+
+  useEffect(() => {
+    console.log("Movie data state:", movieData);
+    console.log("Pending state:", pending);
+  }, [movieData, pending]);
   const handleStartPress = useCallback(() => {
     // Add your navigation or action here
   }, []);

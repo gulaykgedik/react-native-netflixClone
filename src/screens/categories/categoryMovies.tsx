@@ -57,7 +57,7 @@ const CategoryMovies: React.FC<CategoryMoviesProps> = memo(({ route }) => {
   const renderItem: ListRenderItem<Movie> = useCallback(({ item }) => (
     <TouchableOpacity
       style={styles.movieBox}
-      onPress={() => navigation.navigate("MovieDetail", { movie: item })}
+      onPress={() => navigation.navigate("MovieDetail", { movieId: item.id })}
     >
       <Image
         source={{ uri: `${IMAGE_URL}${item.poster_path}` }}

@@ -1,43 +1,140 @@
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import {
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
+import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
+import { useDispatch } from 'react-redux';
+
 import Button from '../../components/ui/button';
 import { ACCOUNTS } from '../../utils/routes';
-import { defaultScreenStyle } from '../../styles/defaultScreenStyle'
-import Colors from '../../theme/colors';
+import { AppDispatch } from '../../store/store';
+import { addNewNotification } from '../../store/slices/notificationSlice';
+import { addNotificationDatabase, getNotifications } from '../../store/actions/notificationActions';
 
 const GetStarted: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
+  const dispatch: AppDispatch = useDispatch();
+
+  const requestPermission = async () => {
+    try {
+      // ---------- ANDROID ----------
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          {
+            title: 'Notification Permission',
+            message: 'This app needs access to your notifications',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          const token = await messaging().getToken();
+          console.log('FCM Token (Android):', token);
+        } else {
+          console.log('Notification permission denied (Android)');
+        }
+      }
+
+      // ---------- IOS ----------
+      else {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (!enabled) {
+          console.log('Notification permission denied (iOS)');
+          return;
+        }
+
+        // 🔴 iOS için ZORUNLU
+        if (!messaging().isDeviceRegisteredForRemoteMessages) {
+          await messaging().registerDeviceForRemoteMessages();
+        }
+
+        const token = await messaging().getToken();
+        console.log('FCM Token (iOS):', token);
+      }
+    } catch (error) {
+      console.log('FCM permission/token error:', error);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(getNotifications());
+    requestPermission();
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      dispatch(
+        addNewNotification({
+          id: remoteMessage.messageId || Math.random().toString(),
+          title: remoteMessage.notification?.title || 'No Title',
+          body: remoteMessage.notification?.body || 'No Body',
+          receivedAt: new Date().toISOString(),
+          show: false,
+          senTime: remoteMessage.sentTime || Date.now(),
+          data: remoteMessage.data || {},
+        }),
+      );
+
+      dispatch(addNotificationDatabase({
+            id: remoteMessage.messageId || Math.random().toString(),
+          title: remoteMessage.notification?.title || 'No Title',
+          body: remoteMessage.notification?.body || 'No Body',
+          receivedAt: new Date().toISOString(),
+          show: false,
+          senTime: remoteMessage.sentTime || Date.now(),
+          data: remoteMessage.data || {},
+      }));
+    });
+
+    return unsubscribe;
+  }, []);
+
   return (
     <ImageBackground
       source={require('../../assets/images/getStarted.png')}
       style={styles.background}
-      imageStyle={styles.image}
       resizeMode="cover"
     >
       <Image
-        resizeMode="cover"
+        source={require('../../assets/images/backImage.png')}
         style={styles.background}
-        imageStyle={styles.image}
-        source={require("../../assets/images/backImage.png")} />
+        resizeMode="cover"
+      />
+
       <View style={styles.content}>
-        <Text style={styles.title}>Unlimited entertainment, one low price.</Text>
-        <Text style={styles.description}>All of Netflix, starting at just £149.</Text>
-        <Button onPress={()=> navigation.navigate(ACCOUNTS)} title="GET STARTED" fullWidth/>
+        <Text style={styles.title}>
+          Unlimited entertainment, one low price.
+        </Text>
+        <Text style={styles.description}>
+          All of Netflix, starting at just £149.
+        </Text>
+
+        <Button
+          title="GET STARTED"
+          fullWidth
+          onPress={() => navigation.navigate(ACCOUNTS)}
+        />
       </View>
     </ImageBackground>
   );
-}
+};
 
-export default GetStarted
+export default GetStarted;
 
 const styles = StyleSheet.create({
   background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  image: {
     flex: 1,
     width: '100%',
     height: '100%',
@@ -50,7 +147,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   title: {
     color: 'white',
@@ -65,6 +161,5 @@ const styles = StyleSheet.create({
     marginTop: 8,
     width: '80%',
     textAlign: 'center',
-
   },
-})
+});
