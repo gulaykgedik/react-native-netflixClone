@@ -13,9 +13,9 @@ const HeaderRight: React.FC = () => {
     const navigation = useNavigation<any>();
     return (
         <TouchableOpacity style={styles.container} onPress={() => navigation.navigate(NOTIFICATIONS)}>
-            {notifications.filter(item => !item.isRead).length > 0 && (
+            {notifications?.filter(item => !item.isRead).length > 0 && (
                 <View style={styles.notificationBadge}>
-                    <Text style={styles.notificationText}>{notifications.filter(item => !item.isRead).length}</Text>
+                    <Text style={styles.notificationText}>{notifications?.filter(item => !item.isRead).length}</Text>
                 </View>
             )}
            

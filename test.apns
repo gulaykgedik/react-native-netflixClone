@@ -8,6 +8,6 @@
         "sound": "default"
     },
     "data": {
-        "link": "netflixClone://movie/617126"
+        "link": "netflixclone://movie/617126"
     }
 }

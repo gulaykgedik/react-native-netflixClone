@@ -6,6 +6,7 @@ import {
   View,
   PermissionsAndroid,
   Platform,
+  Linking,
 } from 'react-native';
 import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -88,16 +89,27 @@ const GetStarted: React.FC = () => {
       );
 
       dispatch(addNotificationDatabase({
-            id: remoteMessage.messageId || Math.random().toString(),
-          title: remoteMessage.notification?.title || 'No Title',
-          body: remoteMessage.notification?.body || 'No Body',
-          receivedAt: new Date().toISOString(),
-          show: false,
-          senTime: remoteMessage.sentTime || Date.now(),
-          data: remoteMessage.data || {},
+        id: remoteMessage.messageId || Math.random().toString(),
+        title: remoteMessage.notification?.title || 'No Title',
+        body: remoteMessage.notification?.body || 'No Body',
+        receivedAt: new Date().toISOString(),
+        show: false,
+        senTime: remoteMessage.sentTime || Date.now(),
+        data: remoteMessage.data || {},
       }));
     });
 
+    messaging().getInitialNotification().then(remoteMessage => {
+      if (remoteMessage?.data?.link && typeof remoteMessage.data.link === 'string') {
+        Linking.openURL(remoteMessage.data.link);
+      }
+    });
+
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      if (remoteMessage?.data?.link && typeof remoteMessage.data.link === 'string') {
+        Linking.openURL(remoteMessage.data.link);
+      }
+    });
     return unsubscribe;
   }, []);
 
